@@ -2,13 +2,13 @@
 Own implementation of the t-Stochastic Neighbors Embedding, for self educational purposes.
 
 ## Implementation details
-This repo follows optimization schemes described by the original author here (https://arxiv.org/pdf/1301.3342.pdf).
+This repo follows optimization schemes described by the original author [here](https://arxiv.org/pdf/1301.3342.pdf).
 ### Compute pairwise similarity matrices
 On input data, this scheme is Quadratic. To curb that, the pairwise similarity scores are only computed on the k nearest neighbors of each input points.
 NB: this speed up is challenged when input data dimensionality becomes "big", ie. 64 or bigger (tested for 5,000 points)
 ### Compute Kullback-Leibler gradients
 On embedded data, a QuadTree is built and then queried following a depth-first search: for each quad cell which is sufficiently far from the point of interest and sufficiently compact, the sum of the repulsive force exerced by all the points inside that cells are summed up to an approximation of the force exerced by the cell centroid.  
-The Barnes Hut process is nicely explained here: https://jheer.github.io/barnes-hut/.
+The Barnes Hut process is nicely explained [here](https://jheer.github.io/barnes-hut/).
 <p float="center">
   <center><img src="assets/images/exact_vs_bh_steptime.png" width="700" />
   <figcaption>Gradient step time comparison (input data 5,000x3). Horizontal line is the exact KL gradient computation. Angle is the approximation parameter, trading gradient precision for speed</figcaption></center>
@@ -22,11 +22,14 @@ The Barnes Hut process is nicely explained here: https://jheer.github.io/barnes-
 
 ### KDTree
 The KD-Tree implementation is rather standard. NN-queries for multiple points are parallelized.  
-Speed up regime is highly non linear, expect x4 for 8 threads on a MacBook Pro.
+Speed up regime is highly non linear, expect x4 for 8 threads on a MacBook Pro.  
+A heap queue is kept and iteratively filled in during the query process. CPython's heapqueue is used for that matter.  
+This implementation has shown to match scikit-learn's implementation in terms of speed (build and query). See [here](https://github.com/remydubois/lsnms/raw/main/assets/images/query_timings.png).
 
 ### QuadTree
 QuadTree is built using bulkloading, point insertion has not been implemented yet. To account for the slowdown occured by this method, the tree is built with a rather large leaf size (16).
-Barnes Hut approximation is parallelized when asked for many points. The speed up regime is similar to the KDTree's one.
+Barnes Hut approximation is parallelized when asked for many points. The speed up regime is similar to the KDTree's one.  
+
 
 ## Example on the iris dataset
 Below an illustration of the TSNE on the iris dataset, compared with sklearn's
