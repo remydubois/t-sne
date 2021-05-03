@@ -1,5 +1,5 @@
 # TSNE
-Own implementation of the t-Stochastic Neighbors Embedding, for self educational purposes.
+Numba implementation of the t-Stochastic Neighbors Embedding.
 
 ## Implementation details
 This repo follows optimization schemes described by the original author [here](https://arxiv.org/pdf/1301.3342.pdf).
